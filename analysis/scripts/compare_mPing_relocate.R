@@ -1,3 +1,4 @@
+#!/usr/bin/env Rscript
 library(tidyverse)
 library(stringr)
 library(dplyr)
@@ -18,7 +19,7 @@ BEDfiles = bed_files %>% map_dfr(read_tsv,skip=1,show_col_types = FALSE,.id="sou
       mutate(LOC_ID=str_c(str_c("Chr",CHROM),START,sep="_"))
 
 head(BEDfiles) 
-#BEDfiles %>% left_join()
+
 write_tsv(BEDfiles %>% select(c(LOC_ID,RIL)),"RILs.mPing.tsv")
 
 # set a value for having a "seen" location as 1
@@ -60,9 +61,9 @@ RIL_site_counts <- function(inRIL) {
     ParentAShare = thisRILLoc %>% inner_join(AParent.Locations)
     ParentEShare = thisRILLoc %>% inner_join(EParent.Locations)
     Parental = unique(bind_rows(ParentAShare,ParentEShare))
-    NonParental = thisRILLoc %>% anti_join(ParentAllShare)
+    NonParental = thisRILLoc %>% anti_join(Parental)
     SharedNonParental = NonParental %>% inner_join(notthisRILLoc)
-    Unique = thisRILLoc %>% anti_join(notthisRILLoc) %>% anti_join(ParentAllShare)
+    Unique = thisRILLoc %>% anti_join(notthisRILLoc) %>% anti_join(Parental)
     
     r = tibble(
       RIL=inRIL,
@@ -70,8 +71,8 @@ RIL_site_counts <- function(inRIL) {
       Parental=length(Parental$LOC_ID),
       AParental=length(ParentAShare$LOC_ID),
       EParental=length(ParentEShare$LOC_ID), 
-      #NonParental=length(NonParental$LOC_ID),
-      #NonParentalShared = length(SharedNonParental$LOC_ID),
+      NonParental=length(NonParental$LOC_ID),
+      NonParentalShared = length(SharedNonParental$LOC_ID),
       Unique=length(Unique$LOC_ID),
       )
     return(r)
