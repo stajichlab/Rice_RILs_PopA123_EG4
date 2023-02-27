@@ -68,8 +68,9 @@ RIL_site_counts <- function(inRIL) {
       Ashared=length(ParentAShare$LOC_ID), 
       Eshared=length(ParentEShare$LOC_ID), 
       ParentShared=length(ParentAllShare$LOC_ID),
-      UniqueToParents=length(RILParentUnique$LOC_ID),
-      UniqueToRILs=length(RILUnique$LOC_ID))
+      UniqueFromParents=length(RILParentUnique$LOC_ID),
+      UniqueFromAllOthers=length(RILUnique$LOC_ID)
+      Total=length(thisRILLoc$LOC_ID))
     return(r)
 }
 
