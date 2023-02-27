@@ -7,7 +7,7 @@ library(dplyr)
 chrlist = read_csv("genome/chrom_nums.csv",col_names=c("Chr","CHR"),col_types="ci")
 mosdepthdir = "coverage/mosdepth"
 
-windows = c(5000,10000, 50000)
+windows = c(5000, 10000, 50000)
 alternating_colors = rep( c("red", "black"), times = length(chrlist$Chr))
 
 plot_strain <- function(strain, data) {
@@ -36,12 +36,13 @@ plot_chrs <- function(chrom, data) {
                                         #guides(fill = guide_legend(keywidth = 3,keyheight = 1))
 }
 
-ChromDepths = tibble(strain=c(),ChromDepth=c())
+
 for (window in windows) {
-    inpattern = sprintf(".%sbp.regions.bed.gz$", window)
-    file_list <- list.files(path = mosdepthdir, pattern = inpattern)
-    bedwindows <- data.frame()
-    for (i in 1:length(file_list)) {
+  ChromDepths = tibble(strain=c(),ChromDepth=c())
+  inpattern = sprintf(".%sbp.regions.bed.gz$", window)
+  file_list <- list.files(path = mosdepthdir, pattern = inpattern)
+  bedwindows <- data.frame()
+  for (i in 1:length(file_list)) {
         infile = sprintf("%s/%s", mosdepthdir, file_list[i])
         strain = str_replace(file_list[i], inpattern, "")
         t = read_tsv(infile, col_names = c("Chr", "Start", "End", "Depth"), col_types ="ciid")
@@ -115,6 +116,6 @@ for (window in windows) {
         pdffile=sprintf("plots/ChrPlot_%dkb.Chr%s.pdf", window/1000,i)
         ggsave(plot = plts[[i]], file = pdffile)
     }
+    cd<-ChromDepths %>% pivot_wider(names_from=CHR, values_from=meddpth,names_prefix="Chr")
+    write_tsv(cd,sprintf("coverage/Chromosome_Depths_%dkb_windows.tsv",window/1000))
 }
-cd<-ChromDepths %>% pivot_wider(names_from=CHR, values_from=meddpth,names_prefix="Chr")
-write_tsv(cd,"coverage/Chromosome_Depths.tsv")
