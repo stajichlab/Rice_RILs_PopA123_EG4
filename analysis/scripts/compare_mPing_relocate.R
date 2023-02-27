@@ -72,7 +72,7 @@ RIL_site_counts <- function(inRIL) {
       SharedAParents = length(ParentAShare$LOC_ID),
       SharedEParents = length(ParentEShare$LOC_ID), 
       NonParental = length(NonParental$LOC_ID),
-      NonParentalShared = length(SharedNonParental$LOC_ID),
+      NonParentalShared_w_RILss = length(SharedNonParental$LOC_ID),
       Unique=length(Unique$LOC_ID),
       )
     return(r)
