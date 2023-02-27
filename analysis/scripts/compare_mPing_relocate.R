@@ -61,6 +61,7 @@ RIL_site_counts <- function(inRIL) {
     ParentEShare = thisRILLoc %>% inner_join(EParent.Locations)
     ParentAllShare = unique(bind_rows(ParentAShare,ParentEShare))
     RILParentUnique = thisRILLoc %>% anti_join(ParentAllShare)
+    RILsharedNonParental = thisRILLoc %>% left_join(notthisRILLoc) %>% anti_join(ParentAllShare)
     RILUnique = thisRILLoc %>% anti_join(notthisRILLoc) %>% anti_join(ParentAllShare)
     
     r = tibble(
@@ -70,6 +71,7 @@ RIL_site_counts <- function(inRIL) {
       ParentShared=length(ParentAllShare$LOC_ID),
       UniqueFromParents=length(RILParentUnique$LOC_ID),
       UniqueFromAllOthers=length(RILUnique$LOC_ID),
+      RILsharedNonParental = length(RILsharedNonParental$LOC_ID),
       Total=length(thisRILLoc$LOC_ID))
     return(r)
 }
