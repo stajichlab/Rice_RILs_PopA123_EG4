@@ -59,20 +59,21 @@ RIL_site_counts <- function(inRIL) {
     #print(thisRILLoc)
     ParentAShare = thisRILLoc %>% inner_join(AParent.Locations)
     ParentEShare = thisRILLoc %>% inner_join(EParent.Locations)
-    ParentAllShare = unique(bind_rows(ParentAShare,ParentEShare))
-    RILParentUnique = thisRILLoc %>% anti_join(ParentAllShare)
-    RILsharedNonParental = thisRILLoc %>% inner_join(notthisRILLoc) %>% anti_join(ParentAllShare)
-    RILUnique = thisRILLoc %>% anti_join(notthisRILLoc) %>% anti_join(ParentAllShare)
+    Parental = unique(bind_rows(ParentAShare,ParentEShare))
+    NonParental = thisRILLoc %>% anti_join(ParentAllShare)
+    SharedNonParental = NonParental %>% inner_join(notthisRILLoc)
+    Unique = thisRILLoc %>% anti_join(notthisRILLoc) %>% anti_join(ParentAllShare)
     
     r = tibble(
       RIL=inRIL,
-      Ashared=length(ParentAShare$LOC_ID), 
-      Eshared=length(ParentEShare$LOC_ID), 
-      ParentShared=length(ParentAllShare$LOC_ID),
-      UniqueFromParents=length(RILParentUnique$LOC_ID),
-      UniqueFromAllOthers=length(RILUnique$LOC_ID),
-      RILsharedNonParental = length(RILsharedNonParental$LOC_ID),
-      Total=length(thisRILLoc$LOC_ID))
+      Total=length(thisRILLoc$LOC_ID),
+      Parental=length(Parental$LOC_ID),
+      AParental=length(ParentAShare$LOC_ID),
+      EParental=length(ParentEShare$LOC_ID), 
+      #NonParental=length(NonParental$LOC_ID),
+      #NonParentalShared = length(SharedNonParental$LOC_ID),
+      Unique=length(Unique$LOC_ID),
+      )
     return(r)
 }
 
